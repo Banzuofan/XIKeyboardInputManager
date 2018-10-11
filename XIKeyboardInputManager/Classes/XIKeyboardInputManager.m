@@ -257,7 +257,7 @@ static void* kEnableKeyboardInputDraftSavedKey = &kEnableKeyboardInputDraftSaved
         
         CGSize constraintSize = CGSizeMake(HUGE_VAL, HUGE_VAL);
         NSDictionary *attrs = @{NSFontAttributeName : _textViewFont};
-        CGFloat _singleLineHeight = [NSStringFromClass(self.class) boundingRectWithSize:constraintSize options:NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingTruncatesLastVisibleLine|NSStringDrawingUsesDeviceMetrics|NSStringDrawingUsesFontLeading attributes:attrs context:nil].size.height;
+        CGFloat _singleLineHeight = [NSStringFromClass(self.class) boundingRectWithSize:constraintSize options:(NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading) attributes:attrs context:nil].size.height;
         
         _maxFrameHeight = _singleLineHeight*3+kTextContainerInsetVertical*2;
         _minFrameHeight = _singleLineHeight+kTextContainerInsetVertical*2;

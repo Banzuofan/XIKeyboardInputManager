@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
     s.name             = 'XIKeyboardInputManager'
-    s.version          = '0.1.0'
+    s.version          = '1.0.1'
     s.summary          = 'XIKeyboardInputManager is a usefull tool to control input view pinned on the top of the keyboard.'
     
     # This description is used to generate tags and improve search results.
