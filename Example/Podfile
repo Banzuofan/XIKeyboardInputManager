@@ -1,0 +1,11 @@
+use_frameworks!
+
+target 'XIKeyboardInputManager_Example' do
+  pod 'XIKeyboardInputManager', :path => '../'
+
+  target 'XIKeyboardInputManager_Tests' do
+    inherit! :search_paths
+
+    
+  end
+end
