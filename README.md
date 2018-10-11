@@ -22,7 +22,7 @@ pod 'XIKeyboardInputManager'
 
 ## Author
 
-banzuofan@hotmail.com, yangxiaolong3@jd.com
+banzuofan@hotmail.com
 
 ## License
 
