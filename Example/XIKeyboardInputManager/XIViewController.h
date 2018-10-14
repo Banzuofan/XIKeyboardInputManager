@@ -8,6 +8,6 @@
 
 @import UIKit;
 
-@interface XIViewController : UIViewController
-
+@interface XIViewController : UIViewController<UITableViewDelegate, UITableViewDataSource>
+@property(nonatomic, strong) UITableView *tableView;
 @end

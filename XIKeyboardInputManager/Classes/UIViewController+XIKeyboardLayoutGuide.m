@@ -100,7 +100,7 @@ static void* XIKeyboardLayoutGuideSavedKey = &XIKeyboardLayoutGuideSavedKey;
                          completion:nil];
     }
     else{
-        [self.superview setNeedsUpdateConstraints];
+        [self.superview layoutIfNeeded];
     }
 }
 

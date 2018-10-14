@@ -328,22 +328,14 @@ static void* kEnableKeyboardInputDraftSavedKey = &kEnableKeyboardInputDraftSaved
 
 - (void)_textViewTextDidChange:(NSNotification *)aNotification
 {
-    ///处理超过限制长度的字符串
     NSString *newText = _textView.text;
-    
     if(newText.length>self.limitedTextLength){
         _textView.text = [self trimPublishContent:newText limitedTextLength:self.limitedTextLength];
     }
-#if DEBUG
-    NSLog(@"%@", @(_textView.text.length));
-#endif
     
     BOOL layoutChanged = NO;
     if(_frameHeight!=_textView.contentSize.height){
-        
         _frameHeight = _textView.contentSize.height;
-        
-        ///限制输入框的高度
         if(_frameHeight>_maxFrameHeight){
             _frameHeight = _maxFrameHeight;
         }
@@ -393,6 +385,7 @@ static void* kEnableKeyboardInputDraftSavedKey = &kEnableKeyboardInputDraftSaved
     if(_textView.text.length>0){
         [self _textViewTextDidChange:nil];
     }
+    [_textView scrollRangeToVisible:_textView.selectedRange];
 }
 
 - (void)setReturnKeyType:(UIReturnKeyType)returnKeyType
@@ -473,12 +466,13 @@ static void* kEnableKeyboardInputDraftSavedKey = &kEnableKeyboardInputDraftSaved
                                                                      multiplier:1
                                                                        constant:_textViewInsets.top],
                                          [NSLayoutConstraint constraintWithItem:_textView
-                                                                      attribute:NSLayoutAttributeBottom
+                                                                      attribute:NSLayoutAttributeHeight
                                                                       relatedBy:NSLayoutRelationEqual
-                                                                         toItem:self
-                                                                      attribute:NSLayoutAttributeBottom
+                                                                         toItem:nil
+                                                                      attribute:NSLayoutAttributeNotAnAttribute
                                                                      multiplier:1
-                                                                       constant:-_textViewInsets.bottom]]];
+                                                                       constant:_frameHeight]
+                                         ]];
     
     [NSLayoutConstraint activateConstraints:_constraints];
     
