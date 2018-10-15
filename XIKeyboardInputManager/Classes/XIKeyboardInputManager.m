@@ -121,7 +121,7 @@ static void* kEnableKeyboardInputDraftSavedKey = &kEnableKeyboardInputDraftSaved
            shouldEndFinishing:(XIKeyboardInputShouldEndFinishingBlock)shouldEndFinishing
                    completion:(XIKeyboardInputDidEndFinishingBlock)completion
 {
-    if(self.customInputView.superview){
+    if(self.customInputView&&self.customInputView.superview){
         [self.customInputView removeFromSuperview];
         self.customInputView = nil;
         
@@ -240,9 +240,8 @@ static void* kEnableKeyboardInputDraftSavedKey = &kEnableKeyboardInputDraftSaved
 
 - (void)dealloc
 {
-    [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                    name:UITextViewTextDidChangeNotification
-                                                  object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [_textView removeObserver:self forKeyPath:@"contentSize"];
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -322,31 +321,35 @@ static void* kEnableKeyboardInputDraftSavedKey = &kEnableKeyboardInputDraftSaved
                                                  selector:@selector(_textViewTextDidEndEditing:) name:UITextViewTextDidEndEditingNotification
                                                    object:_textView];
         
+        
+        [_textView addObserver:self
+                    forKeyPath:@"contentSize"
+                       options:NSKeyValueObservingOptionNew|NSKeyValueObservingOptionOld
+                       context:nil];
     }
     return self;
 }
 
-- (void)_textViewTextDidChange:(NSNotification *)aNotification
+- (void)observeValueForKeyPath:(nullable NSString *)keyPath ofObject:(nullable id)object change:(nullable NSDictionary<NSKeyValueChangeKey, id> *)change context:(nullable void *)context
 {
-    NSString *newText = _textView.text;
-    if(newText.length>self.limitedTextLength){
-        _textView.text = [self trimPublishContent:newText limitedTextLength:self.limitedTextLength];
-    }
-    
-    BOOL layoutChanged = NO;
-    if(_frameHeight!=_textView.contentSize.height){
-        _frameHeight = _textView.contentSize.height;
-        if(_frameHeight>_maxFrameHeight){
-            _frameHeight = _maxFrameHeight;
-        }
-        else if(_frameHeight<_minFrameHeight){
-            _frameHeight = _minFrameHeight;
+    if([keyPath isEqualToString:@"contentSize"]){
+        CGSize oldSize = [change[@"old"] CGSizeValue];
+        CGSize newSize = [change[@"new"] CGSizeValue];
+        
+        if(CGSizeEqualToSize(oldSize, newSize)){
+            return;
         }
         
-        layoutChanged = YES;
-    }
-    
-    if(layoutChanged){
+        if(_frameHeight!=_textView.contentSize.height){
+            _frameHeight = _textView.contentSize.height;
+            if(_frameHeight>_maxFrameHeight){
+                _frameHeight = _maxFrameHeight;
+            }
+            else if(_frameHeight<_minFrameHeight){
+                _frameHeight = _minFrameHeight;
+            }
+        }
+        
         [self invalidateIntrinsicContentSize];
         [UIView animateWithDuration:0.25 delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
             if(self.superview){
@@ -354,6 +357,14 @@ static void* kEnableKeyboardInputDraftSavedKey = &kEnableKeyboardInputDraftSaved
             }
         } completion:nil];
         [_textView scrollRangeToVisible:_textView.selectedRange];
+    }
+}
+
+- (void)_textViewTextDidChange:(NSNotification *)aNotification
+{
+    NSString *newText = _textView.text;
+    if(newText.length>self.limitedTextLength){
+        _textView.text = [self trimPublishContent:newText limitedTextLength:self.limitedTextLength];
     }
 }
 
@@ -370,6 +381,7 @@ static void* kEnableKeyboardInputDraftSavedKey = &kEnableKeyboardInputDraftSaved
 {
     [super setPlaceholder:placeholder];
     _textView.placeholder = placeholder;
+    [self _textViewTextDidChange:nil];
 }
 
 - (void)setText:(NSString *)text
@@ -382,10 +394,9 @@ static void* kEnableKeyboardInputDraftSavedKey = &kEnableKeyboardInputDraftSaved
 {
     [super didMoveToSuperview];
     
-    if(_textView.text.length>0){
+    if(self.superview&&_textView.text.length>0){
         [self _textViewTextDidChange:nil];
     }
-    [_textView scrollRangeToVisible:_textView.selectedRange];
 }
 
 - (void)setReturnKeyType:(UIReturnKeyType)returnKeyType

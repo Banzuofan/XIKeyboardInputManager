@@ -10,11 +10,6 @@
 #import "XIKeyboardInputManager.h"
 #import "XIProgressHUD.h"
 
-//typedef NS_ENUM(NSUInteger, XIKeyboardBackgroundMode) {
-//    XIKeyboardBackgroundNone,
-//    XIKeyboardBackgroundTransparent,
-//    XIKeyboardBackgroundTranslucent,
-//};
 @interface XIViewController ()
 {
     UITableView *contentTable;
@@ -73,16 +68,18 @@ static NSString * const ReusedCellId = @"ReusedCellId";
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
     XIKeyboardBackgroundMode mode = XIKeyboardBackgroundNone;
+    NSString *draft = nil;
     if(indexPath.row==0){
     }
     else if(indexPath.row==1){
         mode = XIKeyboardBackgroundTransparent;
+        draft = @"// Do any additional setup after loading the view, typically from a nib.";
     }
     else if(indexPath.row==2){
         mode = XIKeyboardBackgroundTranslucent;
     }
     
-    [self beginEditingWithDraft:@"Do any additional setup after loading the view, typically from a nib." placeholder:@"enter some text..." backgroundMode:mode limitedTextLength:100 inputType:CommonReplyType shouldEndFinishing:^BOOL(NSString *currentInput) {
+    [self beginEditingWithDraft:draft placeholder:@"enter some text..." backgroundMode:mode limitedTextLength:1000 inputType:CommonReplyType shouldEndFinishing:^BOOL(NSString *currentInput) {
         if(currentInput.length==0){
             [XIProgressHUD showToast:@"empty input, check again!" onView:self.view dismissAfter:1];
             return NO;
