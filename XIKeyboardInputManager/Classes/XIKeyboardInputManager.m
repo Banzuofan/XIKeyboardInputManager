@@ -99,6 +99,11 @@ static void* kEnableKeyboardInputDraftSavedKey = &kEnableKeyboardInputDraftSaved
     [self.draftPool removeObjectForKey:key];
 }
 
+- (BOOL)inputViewOnFocus
+{
+    return (self.customInputView && self.customInputView.textInputView.isFirstResponder);
+}
+
 - (void)_keyboardWillHide:(NSNotification *)aNotification
 {
     NSDictionary *userInfo = [aNotification userInfo];

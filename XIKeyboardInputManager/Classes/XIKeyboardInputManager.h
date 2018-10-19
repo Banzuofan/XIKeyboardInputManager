@@ -19,6 +19,11 @@ typedef NS_ENUM(NSUInteger, XIKeyboardInputType) {
 @interface UIViewController (XIKeyboardInputManager)
 @property(nonatomic, assign) BOOL enableKeyboardInputDraft;
 
+/**
+ 输入框是否处在编辑中
+ */
+- (BOOL)inputViewOnFocus;
+
 - (NSString *)getDraftForKey:(NSString *)key;
 - (void)setDraft:(NSString *)draft forKey:(NSString *)key;
 - (void)removeDraftForKey:(NSString *)key;
