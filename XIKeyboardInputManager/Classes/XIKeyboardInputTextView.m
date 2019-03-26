@@ -50,13 +50,15 @@
         [self.superview addSubview:placeholderLabel];
         placeholderLabel.translatesAutoresizingMaskIntoConstraints = NO;
         
+        [placeholderLabel setContentHuggingPriority:1000 forAxis:UILayoutConstraintAxisHorizontal];
+        [placeholderLabel setContentHuggingPriority:1000 forAxis:UILayoutConstraintAxisVertical];
         NSArray *constraints = @[[NSLayoutConstraint constraintWithItem:placeholderLabel
                                                               attribute:NSLayoutAttributeLeft
                                                               relatedBy:NSLayoutRelationEqual
                                                                  toItem:self
                                                               attribute:NSLayoutAttributeLeft
                                                              multiplier:1
-                                                               constant:self.textContainerInset.left*2],
+                                                               constant:self.textContainerInset.left+5],
                                  [NSLayoutConstraint constraintWithItem:placeholderLabel
                                                               attribute:NSLayoutAttributeTop
                                                               relatedBy:NSLayoutRelationEqual
@@ -67,7 +69,7 @@
         [NSLayoutConstraint activateConstraints:constraints];
         
     }
-    placeholderLabel.hidden = self.text.length>0;
+    placeholderLabel.hidden = self.text.length>0||self.attributedText.length>0;
 }
 
 - (void)setPlaceholder:(NSString *)placeholder
@@ -92,6 +94,12 @@
     if(placeholderLabel){
         placeholderLabel.font = placeholderFont;
     }
+}
+
+- (void)setText:(NSString *)text {
+    [super setText:text];
+    
+    placeholderLabel.hidden = (text && text.length > 0);
 }
 
 @end
